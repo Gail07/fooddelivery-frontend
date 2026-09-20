@@ -35,6 +35,7 @@ const StoreContextProvider = (props) => {
     }
 
     const fetchFoodList = async () => {
+        const response = await axios.get(url+"/api/food/list");
         setFoodList(response.data.data)
     }
 
@@ -44,8 +45,8 @@ const StoreContextProvider = (props) => {
             if (localStorage.getItem("token")) {
                 setToken(localStorage.getItem("token"));
             }
-            loadData();
         }
+        loadData();
     }, [])
 
     const conextValue = {
