@@ -1,9 +1,12 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import './LoginPopup.css'
 import { assets } from '../../assets/assets'
-import { useEffect } from 'react'
+import { StoreContext } from '../../context/StoreContext'
+
 
 const LoginPopup = ({setShowLogin}) => {
+
+    const {url} = useContext(StoreContext)
 
     const [currState,setcurrState] = useState("Login")
     const [data, setData] = useState({
@@ -17,6 +20,8 @@ const LoginPopup = ({setShowLogin}) => {
         const value = event.target.value;
         setData(data=>({...data,[name]:value}))
     }
+
+    const
 
 
   return (
