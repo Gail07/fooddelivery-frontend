@@ -46,6 +46,18 @@
     border-radius: 4px;
 }
 
+.login-popup-password{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.login-popup-password small{
+    color: #808080;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
 .login-popup-container button{
     border: none;
     padding: 10px;
@@ -72,4 +84,3 @@
     font-weight: 500;
     cursor: pointer;
 }
-

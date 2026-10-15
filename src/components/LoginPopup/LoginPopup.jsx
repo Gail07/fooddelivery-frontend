@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import { useContext, useState } from 'react'
 import './LoginPopup.css'
 import { assets } from '../../assets/assets'
 import { StoreContext } from '../../context/StoreContext'
@@ -55,7 +55,20 @@ const LoginPopup = ({setShowLogin}) => {
             <div className="login-popup-inputs">
                 {currState==="Login"?<></>:<input name='name' onChange={onChangeHandler} value={data.name} type="text" placeholder='Your name' required/>}
                 <input name='email' onChange={onChangeHandler} value={data.email} type="email" placeholder='Your email' required/>
-                <input name='password' onChange={onChangeHandler} value={data.password} type="password" placeholder='Password' required/>
+                <div className="login-popup-password">
+                    <input
+                        name='password'
+                        onChange={onChangeHandler}
+                        value={data.password}
+                        type="password"
+                        placeholder='Password'
+                        minLength={currState==="Sign Up"?8:undefined}
+                        pattern={currState==="Sign Up"?"(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,}":undefined}
+                        title="Use at least 8 characters, including an uppercase letter, a lowercase letter, a number, and a special character."
+                        required
+                    />
+                    {currState==="Sign Up" && <small>Password must contain at least 8 characters, including an uppercase letter, a lowercase letter, a number, and a special character.</small>}
+                </div>
             </div>
             <button type='submit'>{currState==="Sign Up"?"Create account":"Login"}</button>
             <div className="login-popup-condition">
