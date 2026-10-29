@@ -40,7 +40,7 @@ const MyOrders = () => {
                         })}</p>
                         <p>${order.amount}.00</p>
                         <p>items:{order.items.length}</p>
-                        <p><span>&#x25cf;</span> <b>{order.status}</b></p>
+                        <p><span>&#x25cf;</span> <b>{order.payment ? order.status : "Awaiting payment"}</b></p>
                         <button onClick={fetchOrders}>Track Order</button>
                     </div>
                 )

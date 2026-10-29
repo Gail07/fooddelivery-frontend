@@ -35,7 +35,9 @@ const StoreContextProvider = (props) => {
         for (const item in cartItems) {
             if (cartItems[item] > 0) {
                 let itemInfo = food_list.find((product) => product._id === item);
-                totalAmount += itemInfo.price * cartItems[item];
+                if (itemInfo) {
+                    totalAmount += itemInfo.price * cartItems[item];
+                }
             }
         }
         return totalAmount;
@@ -43,12 +45,22 @@ const StoreContextProvider = (props) => {
 
     const fetchFoodList = async () => {
         const response = await axios.get(url+"/api/food/list");
-        setFoodList(response.data.data)
+        if (response.data.success) {
+            setFoodList(response.data.data)
+        }
     }
 
     const loadCartData = async (token) => {
         const response = await axios.post(url+"/api/cart/get",{},{headers:{token}});
-        setCartItems(response.data.cartData);
+        if (response.status === 401) {
+            // Jeton expiré (validité 1 jour) : déconnexion propre
+            localStorage.removeItem("token");
+            setToken("");
+            return;
+        }
+        if (response.data.success) {
+            setCartItems(response.data.cartData);
+        }
     }
 
     useEffect(() => {
