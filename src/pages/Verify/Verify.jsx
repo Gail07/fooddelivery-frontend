@@ -1,31 +1,38 @@
-import React, { useContext, useEffect } from 'react'
+import { useContext, useEffect } from 'react'
 import './Verify.css'
 import { useSearchParams } from 'react-router-dom'
 import { StoreContext } from '../../context/StoreContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+// Le paiement n'est PAS validé ici : c'est le webhook Stripe côté serveur qui marque la commande payée.
+// Cette page sert seulement à rediriger le client après Stripe.
 const Verify = () => {
 
-  const [searchParams,setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const success = searchParams.get("success")
   const orderId = searchParams.get("orderId")
-  const {url} = useContext(StoreContext);
+  const {url,setCartItems} = useContext(StoreContext);
   const navigate = useNavigate();
 
-  const verifyPayment = async () => {
-    const response = await axios.post(url+"/api/order/verify",{success,orderId});
-    if (response.data.success){
-      navigate("/myorders");
-    }
-    else{
-      navigate("/")
-    }
-  }
-
   useEffect(()=>{
-    verifyPayment();
-  },[])
+    const finish = async () => {
+      if (success === "true") {
+        setCartItems({});
+        navigate("/myorders", { replace: true });
+        return;
+      }
+      // Paiement abandonné : on supprime la commande non payée de l'utilisateur connecté
+      const token = localStorage.getItem("token");
+      if (token && orderId) {
+        try {
+          await axios.post(url+"/api/order/cancel",{orderId},{headers:{token}});
+        } catch { /* sans effet si la commande n'existe plus */ }
+      }
+      navigate("/cart", { replace: true });
+    }
+    finish();
+  },[success, orderId, url, navigate, setCartItems])
 
   return (
     <div className='verify'>

@@ -28,26 +28,22 @@ const PlaceOrder = () => {
 
       const placeOrder = async (event) =>{
         event.preventDefault();
-        let orderItems = [];
-        food_list.map((item)=>{
-          if (cartItems[item._id]>0){
-            let itemInfo = item;
-            itemInfo["quantity"] = cartItems[item._id];
-            orderItems.push(itemInfo)
-          }
-        })
-        let orderData = {
+        // Seuls les identifiants et les quantités sont envoyés :
+        // le serveur relit les noms et les prix en base et calcule le total.
+        const orderItems = food_list
+          .filter((item) => cartItems[item._id] > 0)
+          .map((item) => ({ _id: item._id, quantity: cartItems[item._id] }));
+        const orderData = {
           address:data,
-          items:orderItems,
-          amount:getTotalCartAmount()+2,
+          items:orderItems
         }
-        let response = await axios.post(url+"/api/order/place",orderData,{headers:{token}});
+        const response = await axios.post(url+"/api/order/place",orderData,{headers:{token}});
         if (response.data.success) {
           const {session_url} = response.data;
           window.location.replace(session_url);
         }
         else{
-          alert("Error");
+          alert(response.data.message || "Error");
         }
       }
 
